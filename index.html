@@ -57,7 +57,7 @@
     <input type="date" id="dob" name="dob" required>
     <label for="doj">Date of Joining: </label>
     <input type="date" id="doj" name="doj" required>
-    <button type="button" onclick="saveDetails()">Save</button>
+    <button type="button" onclick="compareDates()">Save</button>
 </form>
 <table id="detailsTable">
     <tr>
@@ -70,27 +70,60 @@
 </table>
 
 <script>
+    function compareDates() {
+        var date1 = new Date(document.getElementById("dob").value);
+        var date2 = new Date(document.getElementById("doj").value);
+
+        if (date1 > date2) {
+            window.alert("The date of birth cannot be larger than the date of joining.");
+        } else {
+            var diffInMs = date2 - date1;
+            var diffInYears = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
+            diffInYears = Math.floor(diffInYears);
+
+            if (diffInYears < 18) {
+                window.alert("The user must be > 18 years of age.");
+            } else {
+                saveDetails();
+            }
+        }
+    }
+
     function saveDetails() {
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const dob = document.getElementById("dob").value;
         const doj = document.getElementById("doj").value;
         const table = document.getElementById("detailsTable");
-        const newRow = table.insertRow(-1);
-        const newCell1 = newRow.insertCell(0);
-        const newCell2 = newRow.insertCell(1);
-        const newCell3 = newRow.insertCell(2);
-        const newCell4 = newRow.insertCell(3);
-        const newCell5 = newRow.insertCell(4);
-        newCell1.innerHTML = firstName;
-        newCell2.innerHTML = lastName;
-        newCell3.innerHTML = dob;
-        newCell4.innerHTML = doj;
-        newCell5.innerHTML = "<button onclick='editRow(this)'>Edit</button> <button onclick='deleteRow(this)'>Delete</button>";
-        document.getElementById("firstName").value = "";
-        document.getElementById("lastName").value = "";
-        document.getElementById("dob").value = "";
-        document.getElementById("doj").value = "";
+        const invalidData = (checkString(firstName) || checkString(lastName))
+        if (invalidData) {
+            alert("The first or last name contains numbers or special characters.");
+        } else {
+            const newRow = table.insertRow(-1);
+            const newCell1 = newRow.insertCell(0);
+            const newCell2 = newRow.insertCell(1);
+            const newCell3 = newRow.insertCell(2);
+            const newCell4 = newRow.insertCell(3);
+            const newCell5 = newRow.insertCell(4);
+            newCell1.innerHTML = firstName;
+            newCell2.innerHTML = lastName;
+            newCell3.innerHTML = dob;
+            newCell4.innerHTML = doj;
+            newCell5.innerHTML = "<button onclick='editRow(this)'>Edit</button> <button onclick='deleteRow(this)'>Delete</button>";
+            document.getElementById("firstName").value = "";
+            document.getElementById("lastName").value = "";
+            document.getElementById("dob").value = "";
+            document.getElementById("doj").value = "";
+        }
+    }
+
+    function checkString(str) {
+        var regex = /[0-9~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/;
+        if (regex.test(str)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function editRow(button) {
